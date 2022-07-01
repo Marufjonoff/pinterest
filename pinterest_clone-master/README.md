@@ -1,4 +1,4 @@
-# pinterest_clone
+# pinterest
 
 A new Flutter project.
 
