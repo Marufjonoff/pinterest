@@ -8,6 +8,8 @@ import 'package:pinterest_project/pages/detail_page.dart';
 import 'package:pinterest_project/view_models/home_view_model.dart';
 import 'package:provider/provider.dart';
 
+import '../services/log_service.dart';
+
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
 
@@ -37,7 +39,44 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
     viewModel.tabController.animateTo(0);
     viewModel.scrollPosition();
   }
-  
+  dynamic snackBar;
+
+  void showSnackBar(){
+    snackBar = SnackBar(
+      behavior: SnackBarBehavior.floating,
+      elevation: 0,
+      content: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        child: Container(
+          height: 50,
+          width: MediaQuery.of(context).size.width,
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(25.0),
+              color: Colors.grey.shade800
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(left: 10),
+                child: Text("Image downloaded!", style: TextStyle(fontSize: 16, color: Colors.white.withOpacity(0.3)),),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(right: 10),
+                child: GestureDetector(
+                    onTap: (){
+                        Log.i("Image download");
+                    },
+                    child: const Text("Show", style: TextStyle(fontSize: 15, color: Colors.blue),)),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
@@ -151,7 +190,14 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                                                           : Text(viewModel.note[index].altDescription!)),
 
                                               IconButton(
-                                                onPressed: (){},
+                                                onPressed: (){
+                                                  showModalBottomSheet(
+                                                      isScrollControlled: true,
+                                                      context: context,
+                                                      builder: (context) {
+                                                        return buildBottomSheet(context, index, viewModel);
+                                                      });
+                                                },
                                                 icon: const Icon(
                                                   FontAwesomeIcons.ellipsisH,
                                                   color: Colors.black,
@@ -170,6 +216,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                               },
                             ),
                           ),
+
                           viewModel.isLoadMore
                               ? Expanded(
                                   flex: 3,
@@ -192,6 +239,315 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  SizedBox buildBottomSheet(BuildContext context, int index, HomeViewModel viewModel) {
+    return SizedBox(
+      height: 400,
+      width: MediaQuery.of(context).size.width,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const SizedBox(
+            height: 10,
+          ),
+
+          // close #icon and text
+          SizedBox(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 5),
+              child: Row(
+                children: [
+                  IconButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    icon: const Icon(
+                      Icons.close,
+                      color: Colors.black,
+                      size: 26,
+                    ),
+                  ),
+                  const SizedBox(
+                    width: 5,
+                  ),
+                  const Padding(
+                    padding: EdgeInsets.only(top: 10),
+                    child: Text(
+                      'Share to',
+                      style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w400,
+                          color: Colors.black),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            height: 30,
+            width: MediaQuery.of(context).size.width,
+          ),
+          const SizedBox(
+            height: 18,
+          ),
+
+          SizedBox(
+            child: ListView(
+              scrollDirection: Axis.horizontal,
+              children: [
+                const SizedBox(
+                  width: 20,
+                ),
+
+                // telegram #share
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: const [
+                    SizedBox(
+                      child: CircleAvatar(
+                          radius: 35,
+                          foregroundImage: AssetImage("assets/images/img_3.png")
+                      ),
+                      height: 60,
+                      width: 60,
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Text(
+                      "Telegram",
+                      style: TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.black),
+                    )
+                  ],
+                ),
+                const SizedBox(
+                  width: 20,
+                ),
+
+                // whatsapp #share
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: const [
+                    SizedBox(
+                      child: CircleAvatar(
+                          radius: 35,
+                          foregroundImage:AssetImage("assets/images/img_4.png")
+                      ),
+                      height: 60,
+                      width: 60,
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Text(
+                      "WhatsApp",
+                      style: TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.black),
+                    )
+                  ],
+                ),
+                const SizedBox(
+                  width: 20,
+                ),
+
+                // message
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: const [
+                    SizedBox(
+                      child: CircleAvatar(
+                          radius: 35,
+                          foregroundImage: AssetImage("assets/images/img_1.png")
+                      ),
+                      height: 60,
+                      width: 60,
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Text(
+                      "Message",
+                      style: TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.black),
+                    )
+                  ],
+                ),
+                const SizedBox(
+                  width: 20,
+                ),
+
+                // gmail
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: const [
+                    SizedBox(
+                      child: CircleAvatar(
+                          radius: 35,
+                          foregroundImage: AssetImage("assets/images/img_5.png")
+                      ),
+                      height: 60,
+                      width: 60,
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Text(
+                      "Gmail",
+                      style: TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.black),
+                    )
+                  ],
+                ),
+                const SizedBox(
+                  width: 20,
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    SizedBox(
+                      child: CircleAvatar(
+                        radius: 35,
+                        backgroundColor: Colors.grey.shade100,
+                        child: const Icon(Icons.more_horiz_outlined, color: Colors.grey, size: 30,),
+                      ),
+                      height: 60,
+                      width: 60,
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    const Text(
+                      "More",
+                      style: TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.black),
+                    )
+                  ],
+                ),
+              ],
+            ),
+            height: 100,
+            width: MediaQuery.of(context).size.width,
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          Divider(
+            height: 0.5,
+            color: Colors.black.withOpacity(0.3),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(left: 12),
+            child: TextButton(
+              onPressed: (){
+                Navigator.pop(context);
+                viewModel.save(index);
+                showSnackBar();
+              },
+              child: const Text(
+                "Download Image",
+                style: TextStyle(
+                    fontWeight: FontWeight.w600,
+                    color: Colors.black,
+                    fontSize: 20),
+              ),
+            ),
+          ),
+
+          SizedBox(
+            width: MediaQuery.of(context).size.width,
+            child: Padding(
+              padding: const EdgeInsets.only(left: 20),
+              child: GestureDetector(
+                  onTap: () {
+                    Log.i("Hide Pin");
+                  },
+                  child: const Text(
+                    "Hide Pin",
+                    style: TextStyle(
+                        fontWeight: FontWeight.w600,
+                        color: Colors.black,
+                        fontSize: 20),
+                  )),
+            ),
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          SizedBox(
+            width: MediaQuery.of(context).size.width,
+            child: Padding(
+              padding: const EdgeInsets.only(left: 20),
+              child: GestureDetector(
+                  onTap: () {
+                    Log.i("Report Pin");
+                  },
+                  child: const Text(
+                    "Report Pin",
+                    style: TextStyle(
+                        fontWeight: FontWeight.w600,
+                        color: Colors.black,
+                        fontSize: 20),
+                  )),
+            ),
+          ),
+          const SizedBox(
+            height: 10,
+          ),
+          SizedBox(
+            width: MediaQuery.of(context).size.width,
+            child: Padding(
+              padding: const EdgeInsets.only(left: 20),
+              child: GestureDetector(
+                  onTap: () {
+                    Log.i("Report Pin");
+                  },
+                  child: Text(
+                    "This goes against Pinterest's community guidelines",
+                    style: TextStyle(
+                        fontWeight: FontWeight.w500,
+                        color: Colors.black.withOpacity(0.8),
+                        fontSize: 15),
+                  )),
+            ),
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          Divider(
+            height: 0.5,
+            color: Colors.black.withOpacity(0.3),
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          SizedBox(
+            width: MediaQuery.of(context).size.width,
+            child: Padding(
+              padding: const EdgeInsets.only(left: 20),
+              child: Text(
+                "This Pin is inspired by your recent activity",
+                style: TextStyle(
+                    fontWeight: FontWeight.w500,
+                    color: Colors.black.withOpacity(0.8),
+                    fontSize: 15),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

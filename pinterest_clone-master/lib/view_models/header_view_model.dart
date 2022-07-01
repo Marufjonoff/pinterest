@@ -12,6 +12,7 @@ class HeaderViewModel extends ChangeNotifier {
   void pageControl(int index) {
     selectedIndex = index;
     notifyListeners();
+
     pageController.jumpToPage(index);
   }
 }

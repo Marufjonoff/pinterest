@@ -38,7 +38,6 @@ class _DetailPageState extends State<DetailPage> {
     viewModel.scrollController.dispose();
   }
 
-
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
